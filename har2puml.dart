@@ -17,7 +17,7 @@ void main() {
 
         var prefix = servers.keys.firstWhere((key) => url.startsWith(key), orElse:() {
           var pathIndex = uri.path.indexOf('/', 1);
-          var servlet = pathIndex == -1 ? uri.path : uri.path.substring(1, pathIndex);
+          var servlet = pathIndex == -1 ? uri.path.substring(1) : uri.path.substring(1, pathIndex);
           var newRequest = pathIndex == -1 ? '/' : uri.path.substring(pathIndex);
 
           var prefix = (newRequest == '/') ? url : url.substring(0, 1 + url.indexOf(newRequest));
@@ -28,9 +28,9 @@ void main() {
         });
 
         var server = servers[prefix];
-        var request = url.substring(prefix.length);
-      
-        stdout.writeln('$client -> $server : $request');
+        var request = uri.hasQuery ? url.substring(prefix.length, url.indexOf('?')) : url.substring(prefix.length);      
+
+        stdout.writeln('$client -> "$server" : $request');
       });
     });
 }
