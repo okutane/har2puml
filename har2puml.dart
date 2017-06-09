@@ -2,6 +2,10 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+const maxLeft = 20;
+const maxRight = 10;
+const maxLength = maxLeft + maxRight;
+
 const client = 'browser';
 
 void main() {
@@ -34,7 +38,20 @@ void main() {
           ? url.substring(prefix.length, url.indexOf('?'))
           : url.substring(prefix.length);
 
-      stdout.writeln('$client -> "$server" : $request');
+      var requestMsg = request.length > maxLength ? request.substring(0, maxLeft) + '..' + request.substring(request.length - maxRight) : request;
+
+      stdout.writeln('$client -> "$server" : $requestMsg');
+
+      var response = e['response'];
+
+      var serverMsgBuffer = new StringBuffer();
+
+      serverMsgBuffer.write(response['status']);
+      serverMsgBuffer.write(' ');
+      serverMsgBuffer.write(response['statusText']);
+      var serverMsg = serverMsgBuffer.toString();
+
+      stdout.writeln('$client <- "$server" : $serverMsg');
     });
   });
 }
