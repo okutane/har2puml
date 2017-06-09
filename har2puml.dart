@@ -16,9 +16,11 @@ void main() {
         var uri = Uri.parse(url);
 
         var prefix = servers.keys.firstWhere((key) => url.startsWith(key), orElse:() {
-          var servlet = uri.path.substring(1, uri.path.indexOf('/', 1));
-          var newRequest = uri.path.substring(uri.path.indexOf('/', 1));
-          var prefix = url.substring(0, 1 + url.indexOf(newRequest));
+          var pathIndex = uri.path.indexOf('/', 1);
+          var servlet = pathIndex == -1 ? uri.path : uri.path.substring(1, pathIndex);
+          var newRequest = pathIndex == -1 ? '/' : uri.path.substring(pathIndex);
+
+          var prefix = (newRequest == '/') ? url : url.substring(0, 1 + url.indexOf(newRequest));
 
           servers[prefix] = servlet;
  
@@ -26,7 +28,7 @@ void main() {
         });
 
         var server = servers[prefix];
-        var request = url.substring(url.indexOf(prefix));
+        var request = url.substring(prefix.length);
       
         stdout.writeln('$client -> $server : $request');
       });
